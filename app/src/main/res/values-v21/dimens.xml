@@ -1,0 +1,4 @@
+<resources>
+    <dimen name="iconCardCornerRadius">10dp</dimen>
+    <dimen name="avatarCardCornerRadius">35dp</dimen>
+</resources>
