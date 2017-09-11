@@ -9,8 +9,7 @@
 
 4.采用易源接口数据
 
-
-
+![效果图](https://raw.githubusercontent.com/yhaolpz/Smile/master/img-folder/qrcode.jpg)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;![效果图](https://raw.githubusercontent.com/yhaolpz/Smile/master/img-folder/icon.jpg)
 
 **扫码下载最新版 apk**
 
