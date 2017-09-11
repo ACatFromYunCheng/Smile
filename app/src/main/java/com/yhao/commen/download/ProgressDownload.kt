@@ -1,6 +1,6 @@
 package com.yhao.commen.download
 
-import com.yhao.commen.Const.Companion.ROOT_DIR
+import com.yhao.commen.App
 import com.yhao.commen.util.MD5Util
 import okhttp3.*
 import okio.Okio
@@ -47,21 +47,19 @@ object ProgressDownload {
 
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
-                val filePath = ROOT_DIR + MD5Util.getHashKey(url)
-                val file = File(filePath)
+                val file = File(App.instance.cacheDir,MD5Util.getHashKey(url))
                 val sink = Okio.buffer(Okio.sink(file))
                 val source = response.body()!!.source()
                 sink.writeAll(source)
                 sink.flush()
-                progressListener.onSave(filePath)
+                progressListener.onSave(file.absolutePath)
             }
         })
     }
 
     fun exist(url: String): String? {
-        val filePath = ROOT_DIR + MD5Util.getHashKey(url)
-        val file = File(filePath)
-        return if (file.exists()) filePath else null
+        val file = File(App.instance.cacheDir, MD5Util.getHashKey(url))
+        return if (file.exists()) file.absolutePath else null
     }
 
 }

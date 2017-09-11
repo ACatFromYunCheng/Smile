@@ -1,6 +1,7 @@
 package com.yhao.module
 
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
 import android.support.annotation.RequiresApi
@@ -22,6 +23,7 @@ class BigPicActivity : AppCompatActivity() {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
         super.onCreate(savedInstanceState)
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContentView(R.layout.activity_big_pic)
         val url = intent.getStringExtra(EXTRA_URL)
         Glide.with(this).load(url).into(mImageView)

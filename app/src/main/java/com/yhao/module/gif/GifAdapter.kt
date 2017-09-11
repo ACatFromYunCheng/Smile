@@ -1,6 +1,10 @@
 package com.yhao.module.pic
 
+import android.Manifest
+import android.app.Activity
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.support.v4.app.ActivityCompat
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -35,13 +39,19 @@ class GifAdapter(var items: List<Gif>?, val recyclerView: RecyclerView) : Recycl
     var gifDrawable: GifDrawable? = null
 
 
+    public fun pauseGif() {
+        if (gifDrawable != null) {
+            gifDrawable!!.pause()
+        }
+    }
+
+
+
     init {
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
-                if (gifDrawable != null) {
-                    gifDrawable!!.pause()
-                }
+                pauseGif()
             }
         })
     }
@@ -75,9 +85,7 @@ class GifAdapter(var items: List<Gif>?, val recyclerView: RecyclerView) : Recycl
             holder.textView.text = items?.get(position)?.title
         }
         holder.gifImageView.setOnClickListener {
-            if (gifDrawable != null) {
-                gifDrawable!!.pause()
-            }
+            pauseGif()
             ProgressDownload.downloadPhoto(items?.get(position)?.img!!, object : ProgressListener {
                 override fun onProgress(readByte: Long, totalByte: Long, done: Boolean) {
                     holder.progressBar.post {

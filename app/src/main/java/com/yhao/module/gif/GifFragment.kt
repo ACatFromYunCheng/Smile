@@ -90,7 +90,13 @@ class GifFragment : Fragment() {
     }
 
     private fun initAdapter() {
-        mRecyclerView.adapter = GifAdapter(mData,mRecyclerView)
+        mRecyclerView.adapter = GifAdapter(mData, mRecyclerView)
+    }
+
+    public fun pauseGif() {
+        if (mRecyclerView != null && mRecyclerView.adapter != null) {
+            (mRecyclerView.adapter as GifAdapter).pauseGif()
+        }
     }
 
 

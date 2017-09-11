@@ -1,6 +1,7 @@
 package com.yhao.module
 
 import android.annotation.SuppressLint
+import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
@@ -13,6 +14,7 @@ class AboutAppActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_about_app)
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         mCollapsingToolbarLayout.setExpandedTitleColor(Color.WHITE)
         mCollapsingToolbarLayout.setCollapsedTitleTextColor(Color.WHITE)
         mVersionTv.text = "v${getVersion()}"

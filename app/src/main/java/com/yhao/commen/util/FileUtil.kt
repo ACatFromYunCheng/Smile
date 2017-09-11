@@ -30,6 +30,7 @@ class FileUtil {
 
         interface DeleteListener {
             fun onDelete(size: Long)
+            fun onDone()
         }
 
         fun deleteFolderFile(deleteListener: DeleteListener,vararg dirs: File ) {
@@ -47,6 +48,7 @@ class FileUtil {
                     e.printStackTrace()
                 }
             }
+            deleteListener.onDone()
         }
 
         private fun deleteFileS(file: File): Long {

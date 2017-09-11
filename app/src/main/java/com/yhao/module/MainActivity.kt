@@ -1,6 +1,7 @@
 package com.yhao.module
 
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
@@ -8,13 +9,12 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.KeyEvent
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
-import com.yhao.commen.Const.Companion.ROOT_DIR
+import com.yhao.commen.App
 import com.yhao.commen.preference
 import com.yhao.commen.util.FileUtil
 import com.yhao.commen.util.FileUtil.Companion.deleteFolderFile
@@ -43,7 +43,15 @@ class MainActivity : AppCompatActivity() {
 
     var mDefaultIndex: Int by preference(this@MainActivity, "sp_key_default_fragment", 0)
 
-    var mCurrentIndex: Int = 0
+    var mCurrentIndex: Int by Delegates.observable(0) {
+        _, _, new ->
+        navigationView.setCheckedItem(when (new) {
+            0 -> R.id.nav_text
+            1 -> R.id.nav_pic
+            2 -> R.id.nav_gif
+            else -> R.id.nav_text
+        })
+    }
 
     var mBackPressedTime by Delegates.observable(0L) {
         _, old, new ->
@@ -62,6 +70,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         init()
     }
 
@@ -99,16 +108,16 @@ class MainActivity : AppCompatActivity() {
                 doAsync {
                     val glideCacheDir = Glide.getPhotoCacheDir(this@MainActivity) as File
                     var totalSize: Long = getFolderSize(glideCacheDir)
-                    val appRootDir = File(ROOT_DIR)
+                    val appRootDir = App.instance.cacheDir
                     totalSize += getFolderSize(appRootDir)
                     uiThread {
                         navigationView.menu.findItem(R.id.nav_clear).title =
                                 "清理缓存${getPrintSize(totalSize)}"
                     }
                 }
+                (mFragments[2] as GifFragment).pauseGif()
             }
         })
-        navigationView.setCheckedItem(R.id.nav_text)
         mCurrentIndex = mDefaultIndex
         supportFragmentManager.beginTransaction()
                 .replace(R.id.content, mFragments[mCurrentIndex])
@@ -121,26 +130,29 @@ class MainActivity : AppCompatActivity() {
         doAsync {
             val glideCacheDir = Glide.getPhotoCacheDir(this@MainActivity) as File
             var totalSize: Long = getFolderSize(glideCacheDir)
-            val appRootDir = File(ROOT_DIR)
-            totalSize += getFolderSize(appRootDir)
+            totalSize += getFolderSize(App.instance.cacheDir)
             uiThread {
                 if (totalSize == 0L) {
-                    item.title = "清理完成..."
+                    item.title = "清理完成"
                     return@uiThread
                 }
                 item.title = "正在清理${getPrintSize(totalSize)}..."
                 doAsync {
                     deleteFolderFile(object : FileUtil.Companion.DeleteListener {
-                        override fun onDelete(size: Long) {
+                        override fun onDone() {
                             uiThread {
-                                totalSize -= size
-                                item.title =
-                                        if (totalSize == 0L) "清理完成"
-                                        else "正在清理${getPrintSize(totalSize)}..."
+                                item.title = "清理完成"
                             }
                         }
 
-                    }, glideCacheDir, appRootDir)
+                        override fun onDelete(size: Long) {
+                            uiThread {
+                                totalSize -= size
+                                item.title = "正在清理${getPrintSize(totalSize)}..."
+                            }
+                        }
+
+                    }, glideCacheDir, App.instance.cacheDir)
                 }
             }
         }
@@ -165,9 +177,19 @@ class MainActivity : AppCompatActivity() {
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            mBackPressedTime = if (mIsMenuOpen) mBackPressedTime else System.currentTimeMillis()
+            mBackPressedTime = if (mIsMenuOpen) {
+                drawerLayout.closeDrawers()
+                mBackPressedTime
+            } else {
+                System.currentTimeMillis()
+            }
         }
         return true
+    }
+
+    override fun onPause() {
+        super.onPause()
+        (mFragments[2] as GifFragment).pauseGif()
     }
 
 

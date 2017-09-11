@@ -18,15 +18,5 @@ class Const {
         fun buildUrl(url: String): String {
             return "$url&$yiyuanAuth"
         }
-
-        val ROOT_DIR: String by lazy {
-            val path = Environment.getExternalStorageDirectory().absolutePath + "/ForYourSmile/"
-            val file = File(path)
-            if (!file.exists()) {
-                file.mkdirs()
-            }
-            path
-        }
-
     }
 }

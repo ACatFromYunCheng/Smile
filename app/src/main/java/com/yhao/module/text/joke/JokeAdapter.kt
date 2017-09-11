@@ -1,5 +1,6 @@
 package com.yhao.module.pic
 
+import android.annotation.SuppressLint
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,10 @@ import com.yhao.model.bean.Joke
 import com.yhao.model.bean.Rhesis
 import com.yhao.module.R
 import org.jetbrains.anko.find
+import java.util.Collections.replaceAll
+import java.util.regex.Pattern
+import java.util.regex.Pattern.compile
+
 
 /**
  * Created by yhao on 17-9-6.
@@ -16,10 +21,14 @@ import org.jetbrains.anko.find
  */
 class JokeAdapter(var items: List<Joke>?) : RecyclerView.Adapter<JokeAdapter.MyViewHolder>() {
 
-
+    @SuppressLint("WrongConstant")
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         holder.title.text = items?.get(position)?.title
-        holder.textView.text = items?.get(position)?.text
+        //原数据有html标签，过滤掉
+        val p_html = compile("<[^>]+>", Pattern.CASE_INSENSITIVE)
+        val m_html = p_html.matcher(items?.get(position)?.text)
+        holder.textView.text = m_html.replaceAll("")
+
     }
 
 
