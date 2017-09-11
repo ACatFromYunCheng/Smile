@@ -13,6 +13,7 @@
 
 **扫码下载最新版 apk**
 
+kotlin 学习笔记 : https://github.com/yhaolpz/Smile/blob/master/kotlinNote.md
 
 **更多介绍、kotlin 开发心得请前往博客查看：**
 
